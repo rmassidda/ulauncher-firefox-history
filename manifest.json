@@ -28,9 +28,9 @@
         "id": "order",
         "type": "select",
         "name": "Results order",
-        "default_value": "frecency",
+        "default_value": "frequency",
         "options":[
-          {"value":"frecency","text":"Firefox Frecency"},
+          {"value":"frecency","text":"Firefox Frequency"},
           {"value":"visit","text":"Visit Count"},
           {"value":"recent","text":"Last Visit"}
           ]
