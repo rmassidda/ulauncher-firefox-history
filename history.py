@@ -14,9 +14,9 @@ class FirefoxHistory():
         self.limit = None
         #   Set history location
         history_location = self.searchPlaces()
-        #   Temporary  file 
+        #   Temporary  file
         #   Using FF63 the DB was locked for exclusive use of FF
-        #   TODO:   Regular updates of the temporary file 
+        #   TODO:   Regular updates of the temporary file
         temporary_history_location = tempfile.mktemp()
         shutil.copyfile(history_location, temporary_history_location)
         #   Open Firefox history database
@@ -27,8 +27,10 @@ class FirefoxHistory():
     def searchPlaces(self):
         #   Firefox folder path
         firefox_path = os.path.join(os.environ['HOME'], '.mozilla/firefox/')
+        if os.path.exists(firefox_path) is False:
+            firefox_path = os.path.join(os.environ['HOME'], 'snap/firefox/common/.mozilla/firefox/')
         #   Firefox profiles configuration file path
-        conf_path = os.path.join(firefox_path,'profiles.ini') 
+        conf_path = os.path.join(firefox_path,'profiles.ini')
         #   Profile config parse
         profile = configparser.RawConfigParser()
         profile.read(conf_path)
@@ -56,7 +58,7 @@ class FirefoxHistory():
         #   Search terms
         terms = query_str.split(' ')
         for term in terms:
-            query += ' ((url LIKE "%%%s%%") OR (title LIKE "%%%s%%")) AND' % (term,term)    
+            query += ' ((url LIKE "%%%s%%") OR (title LIKE "%%%s%%")) AND' % (term,term)
         #   Delete last AND
         query = query[:-4]
 
