@@ -3,6 +3,7 @@ import tempfile
 import shutil
 import configparser
 import os
+import logging
 
 class FirefoxHistory():
     def __init__(self):
@@ -31,14 +32,30 @@ class FirefoxHistory():
             firefox_path = os.path.join(os.environ['HOME'], 'snap/firefox/common/.mozilla/firefox/')
         #   Firefox profiles configuration file path
         conf_path = os.path.join(firefox_path,'profiles.ini')
+
+        # Debug
+        logging.debug("Config path %s" % conf_path)
+        if not os.path.exists(conf_path):
+            logging.error("Firefox profiles.ini not found")
+            return None
+
         #   Profile config parse
         profile = configparser.RawConfigParser()
         profile.read(conf_path)
         prof_path = profile.get("Profile0", "Path")
+
         #   Sqlite db directory path
         sql_path = os.path.join(firefox_path,prof_path)
-        #   Sqlite db path
-        return os.path.join(sql_path,'places.sqlite')
+        sql_path = os.path.join(sql_path,'places.sqlite')
+
+        # Debug
+        logging.debug("Sql path %s" % sql_path)
+        if not os.path.exists(sql_path):
+            logging.error("Firefox places.sqlite not found")
+            return None
+
+        return sql_path
+
 
     #   Get hostname from url
     def __getHostname(self,str):
@@ -94,9 +111,13 @@ class FirefoxHistory():
         query += ' DESC LIMIT %d' % self.limit
 
         #   Query execution
-        cursor = self.conn.cursor()
-        cursor.execute(query)
-        rows = cursor.fetchall()
+        try:
+            cursor = self.conn.cursor()
+            cursor.execute(query)
+            rows = cursor.fetchall()
+        except Exception as e:
+            logging.error("Error in query (%s) execution: %s" % (query, e))
+            return None
         return rows
 
     def close(self):
