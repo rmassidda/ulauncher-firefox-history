@@ -27,9 +27,21 @@ class FirefoxHistory():
 
     def searchPlaces(self):
         #   Firefox folder path
-        firefox_path = os.path.join(os.environ['HOME'], '.mozilla/firefox/')
-        if os.path.exists(firefox_path) is False:
-            firefox_path = os.path.join(os.environ['HOME'], 'snap/firefox/common/.mozilla/firefox/')
+        paths = [
+            '.mozilla/firefox/',
+            'snap/firefox/common/.mozilla/firefox/',
+            '.config/mozilla/firefox/'
+        ]
+        firefox_path = None
+        for path in paths:
+            path = os.path.join(os.environ['HOME'], path)
+            if os.path.exists(path):
+                firefox_path = path
+                break
+
+        if firefox_path is None:
+            firefox_path = os.path.join(os.environ['HOME'], paths[0])
+
         #   Firefox profiles configuration file path
         conf_path = os.path.join(firefox_path,'profiles.ini')
 
