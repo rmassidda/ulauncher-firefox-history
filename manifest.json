@@ -50,6 +50,12 @@
           {"value":"true","text":"Yes"},
           {"value":"false","text":"No"}
         ]
+      },
+      {
+        "id": "firefox_profile_location",
+        "type": "text",
+        "name": "Firefox Profile Location",
+        "default_value": "snap/firefox/common/.mozilla/firefox/, .mozilla/firefox/, .config/mozilla/firefox/"
       }
 
     ]

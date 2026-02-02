@@ -5,6 +5,9 @@ import configparser
 import os
 import logging
 
+class ProfilesIniNotFoundError(Exception):
+    pass
+
 class FirefoxHistory():
     def __init__(self):
         #   Aggregate results
@@ -15,6 +18,14 @@ class FirefoxHistory():
         self.limit = None
         #   Bookmarks only
         self.bookmarks_only = None
+
+        self.firefox_profile_location = None
+        self.conn = None
+
+    def establish_connection(self):
+        if self.conn:
+            self.conn.close()
+
         #   Set history location
         history_location = self.searchPlaces()
         #   Temporary  file
@@ -29,17 +40,24 @@ class FirefoxHistory():
 
     def searchPlaces(self):
         #   Firefox folder path
-        firefox_path = os.path.join(os.environ['HOME'], '.mozilla/firefox/')
-        if os.path.exists(firefox_path) is False:
-            firefox_path = os.path.join(os.environ['HOME'], 'snap/firefox/common/.mozilla/firefox/')
+        paths = [x.strip() for x in self.firefox_profile_location.split(',')]
+
+        firefox_path = None
+        for path in paths:
+            path = os.path.join(os.environ['HOME'], path)
+            logging.debug("Checking path: %s" % path)
+            if os.path.exists(os.path.join(path, 'profiles.ini')):
+                firefox_path = path
+                break
+
+        if firefox_path is None:
+            raise ProfilesIniNotFoundError("profiles.ini not found in any of the configured paths")
+
         #   Firefox profiles configuration file path
         conf_path = os.path.join(firefox_path,'profiles.ini')
 
         # Debug
         logging.debug("Config path %s" % conf_path)
-        if not os.path.exists(conf_path):
-            logging.error("Firefox profiles.ini not found")
-            return None
 
         #   Profile config parse
         profile = configparser.RawConfigParser()

@@ -1,10 +1,14 @@
-from ulauncher.api.client.Extension import Extension
-from ulauncher.api.client.EventListener import EventListener
-from ulauncher.api.shared.event import KeywordQueryEvent, SystemExitEvent,PreferencesUpdateEvent, PreferencesEvent
-from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
-from ulauncher.api.shared.action.RenderResultListAction import RenderResultListAction
-from ulauncher.api.shared.action.OpenUrlAction import OpenUrlAction
 from history import FirefoxHistory
+from ulauncher.api.client.EventListener import EventListener
+from ulauncher.api.client.Extension import Extension
+from ulauncher.api.shared.action.OpenUrlAction import OpenUrlAction
+from ulauncher.api.shared.action.RenderResultListAction import \
+    RenderResultListAction
+from ulauncher.api.shared.event import (KeywordQueryEvent, PreferencesEvent,
+                                        PreferencesUpdateEvent,
+                                        SystemExitEvent)
+from ulauncher.api.shared.item.ExtensionResultItem import ExtensionResultItem
+
 
 class FirefoxHistoryExtension(Extension):
     def __init__(self):
@@ -23,6 +27,9 @@ class PreferencesEventListener(EventListener):
         extension.fh.aggregate = event.preferences['aggregate']
         #   Results Order
         extension.fh.order = event.preferences['order']
+        #   Firefox Profile Location
+        extension.fh.firefox_profile_location = event.preferences['firefox_profile_location']
+        extension.fh.establish_connection()
         #   Results Number
         try:
             n = int(event.preferences['limit'])
@@ -48,6 +55,9 @@ class PreferencesUpdateEventListener(EventListener):
             extension.fh.aggregate = event.new_value
         elif event.id == 'bookmarks_only':
             extension.fh.bookmarks_only = event.new_value
+        elif event.id == 'firefox_profile_location':
+            extension.fh.firefox_profile_location = event.new_value
+            extension.fh.establish_connection()
 
 class SystemExitEventListener(EventListener):
     def on_event(self,event,extension):
