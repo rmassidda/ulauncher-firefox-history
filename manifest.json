@@ -34,14 +34,23 @@
           {"value":"visit","text":"Visit Count"},
           {"value":"recent","text":"Last Visit"}
           ]
-      },  
+      },
       {
         "id": "limit",
         "type": "input",
         "name": "Results number",
         "default_value": "5"
+      },
+      {
+        "id": "bookmarks_only",
+        "type": "select",
+        "name": "Search only in bookmarks",
+        "default_value": "false",
+        "options":[
+          {"value":"true","text":"Yes"},
+          {"value":"false","text":"No"}
+        ]
       }
 
     ]
   }
-  

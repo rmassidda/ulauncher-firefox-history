@@ -29,7 +29,9 @@ class PreferencesEventListener(EventListener):
         except:
             n = 10
         extension.fh.limit = n
-        
+        #   Bookmarks only
+        extension.fh.bookmarks_only = event.preferences['bookmarks_only']
+
 class PreferencesUpdateEventListener(EventListener):
     def on_event(self,event,extension):
         #   Results Order
@@ -44,6 +46,8 @@ class PreferencesUpdateEventListener(EventListener):
                 pass
         elif event.id == 'aggregate':
             extension.fh.aggregate = event.new_value
+        elif event.id == 'bookmarks_only':
+            extension.fh.bookmarks_only = event.new_value
 
 class SystemExitEventListener(EventListener):
     def on_event(self,event,extension):
@@ -59,7 +63,7 @@ class KeywordQueryEventListener(EventListener):
         #   Search into Firefox History
         results = extension.fh.search(query)
         for link in results:
-            #   Encode 
+            #   Encode
             hostname = link[0]
             #   Split Domain Levels
             dm = hostname.split('.')
