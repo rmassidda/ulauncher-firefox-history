@@ -91,16 +91,21 @@ class FirefoxHistory():
             query = 'SELECT hostname(moz_places.url)'
         else:
             query = 'SELECT DISTINCT moz_places.url'
-        query += ',moz_places.title FROM moz_places'
 
         if self.bookmarks_only == "true":
+            query += ',moz_bookmarks.title FROM moz_places'
             query += ' JOIN moz_bookmarks ON moz_places.id = moz_bookmarks.fk'
+        else:
+            query += ',moz_places.title FROM moz_places'
 
         query += ' WHERE'
         #   Search terms
         terms = query_str.split(' ')
         for term in terms:
-            query += ' ((moz_places.url LIKE "%%%s%%") OR (moz_places.title LIKE "%%%s%%")) AND' % (term,term)
+            if self.bookmarks_only == "true":
+                query += ' ((moz_bookmarks.title LIKE "%%%s%%") OR (moz_places.title LIKE "%%%s%%") OR (moz_places.url LIKE "%%%s%%")) AND' % (term,term,term)
+            else:
+                query += ' ((moz_places.url LIKE "%%%s%%") OR (moz_places.title LIKE "%%%s%%")) AND' % (term,term)
         #   Delete last AND
         query = query[:-4]
 
